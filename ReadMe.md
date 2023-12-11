@@ -1,4 +1,4 @@
-# BileMo 
+# BileMo [![Codacy Badge](https://app.codacy.com/project/badge/Grade/23555bed4a8047d29c778be2cf7b65da)](https://app.codacy.com/gh/Itsatsu/BileMo/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 Ceci est un projet pour le parcours de formation [Développeur d'application PHP/Symfony sur Openclassroom](https://openclassrooms.com/fr/paths/59-developpeur-dapplication-php-symfony).
 Le but de ce projet est de créer une API pour une entreprise fictive de vente de téléphone portable.
 
