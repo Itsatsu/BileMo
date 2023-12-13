@@ -13,40 +13,40 @@ class Phone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getPhones", "getPhonesDetail"])]
+    #[Groups(["getPhones", "getPhoneDetail"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getPhones", "getPhonesDetail"])]
+    #[Groups(["getPhones", "getPhoneDetail"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["getPhones", "getPhonesDetail"])]
+    #[Groups(["getPhones", "getPhoneDetail"])]
 
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?string $color = null;
 
     #[ORM\Column]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?bool $fiveG = null;
 
     #[ORM\Column]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?bool $fourG = null;
 
     #[ORM\Column]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?int $battery = null;
 
     #[ORM\Column]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?int $storage = null;
 
     #[ORM\Column]
-    #[Groups(["getPhonesDetail"])]
+    #[Groups(["getPhoneDetail"])]
     private ?float $screenDiagonal = null;
 
     #[ORM\ManyToOne(inversedBy: 'phones')]
