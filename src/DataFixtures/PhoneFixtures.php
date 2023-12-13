@@ -4,10 +4,8 @@ namespace App\DataFixtures;
 
 use App\Entity\Brand;
 use App\Entity\Phone;
-use App\Repository\BrandRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class PhoneFixtures extends Fixture
 {
