@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PhoneRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PhoneRepository::class)]
 class Phone
@@ -12,34 +13,45 @@ class Phone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getPhones", "getPhonesDetail"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getPhones", "getPhonesDetail"])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(["getPhones", "getPhonesDetail"])]
+
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getPhonesDetail"])]
     private ?string $color = null;
 
     #[ORM\Column]
+    #[Groups(["getPhonesDetail"])]
     private ?bool $fiveG = null;
 
     #[ORM\Column]
+    #[Groups(["getPhonesDetail"])]
     private ?bool $fourG = null;
 
     #[ORM\Column]
+    #[Groups(["getPhonesDetail"])]
     private ?int $battery = null;
 
     #[ORM\Column]
+    #[Groups(["getPhonesDetail"])]
     private ?int $storage = null;
 
     #[ORM\Column]
+    #[Groups(["getPhonesDetail"])]
     private ?float $screenDiagonal = null;
 
     #[ORM\ManyToOne(inversedBy: 'phones')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getPhones", "getPhoneDetail"])]
     private ?Brand $brand = null;
 
     public function getId(): ?int
