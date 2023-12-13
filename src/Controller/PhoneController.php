@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/phones')]
-
 class PhoneController extends AbstractController
 {
     #[Route('/', name: 'app_phone', methods: ['GET'])]

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\PhoneRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -22,7 +21,6 @@ class Phone
 
     #[ORM\Column]
     #[Groups(["getPhones", "getPhoneDetail"])]
-
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
