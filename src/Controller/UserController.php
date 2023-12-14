@@ -15,6 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -45,9 +46,19 @@ class UserController extends AbstractController
     }
 
     #[Route('api/users/{id}', name: 'user_update', methods: ['PUT'])]
-    public function updateUser(User $user, SerializerInterface $serializer, EntityManagerInterface $em, Request $request, CustomerRepository $customerRepository): JsonResponse
+    public function updateUser(User $user, SerializerInterface $serializer, EntityManagerInterface $em, Request $request, CustomerRepository $customerRepository, ValidatorInterface $validator): JsonResponse
     {
         $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+        $errors = $validator->validate($updatedUser);
+        if (count($errors) > 0) {
+            $jsonErrors = $serializer->serialize($errors, 'json');
+            return new JsonResponse(
+                $jsonErrors,
+                Response::HTTP_BAD_REQUEST,
+                [],
+                true
+            );
+        }
 
         $content = $request->toArray();
         $idCustomer = $content['customerId'] ?? null;
@@ -64,11 +75,20 @@ class UserController extends AbstractController
     }
 
     #[Route('api/users', name: 'user_create', methods: ['POST'])]
-    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, CustomerRepository $customerRepository): JsonResponse
+    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, CustomerRepository $customerRepository, ValidatorInterface $validator): JsonResponse
     {
 
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $jsonErrors = $serializer->serialize($errors, 'json');
+            return new JsonResponse(
+                $jsonErrors,
+                Response::HTTP_BAD_REQUEST,
+                [],
+                true
+            );
+        }
         $user->setPassword(
             $passwordHasher->hashPassword(
                 $user,
