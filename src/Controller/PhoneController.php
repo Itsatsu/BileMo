@@ -19,8 +19,9 @@ class PhoneController extends AbstractController
     {
         $page = $request->query->get('page', 1);
         $limit = $request->query->get('limit', 3);
+        $brand = $request->query->get('brand', null);
 
-        $phoneList = $phoneRepository->findAllPhonePagined();
+        $phoneList = $phoneRepository->findAllPhonePagined($page, $limit, $brand);
         $jsonPhoneList = $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
         return new JsonResponse(
             $jsonPhoneList,
