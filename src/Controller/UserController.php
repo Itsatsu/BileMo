@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class UserController extends AbstractController
 {
@@ -114,11 +116,19 @@ class UserController extends AbstractController
     }
 
     #[Route('api/customers/{id}/users', name: 'customer_users', methods: ['GET'])]
-    public function getCustomerUsers(Customer $customer, UserRepository $userRepository, SerializerInterface $serializer, Request $request): JsonResponse
+    public function getCustomerUsers(Customer $customer, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
         $page = $request->query->get('page', 1);
         $limit = $request->query->get('limit', 3);
-        $users = $userRepository->findByCustomerUserPagined($customer->getId(), $page, $limit);
+
+        $idCache = 'customer-users-list-' . $customer->getId() . '-' . $page . '-' . $limit;
+
+        $users = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $customer, $page, $limit) {
+            echo 'No cache';
+            $item->tag('usersCache');
+            return $userRepository->findByCustomerUserPagined($customer->getId(), $page, $limit);
+        });
+        
         $jsonUsers = $serializer->serialize($users, 'json', ['groups' => 'getUserDetail']);
 
         return new JsonResponse(
