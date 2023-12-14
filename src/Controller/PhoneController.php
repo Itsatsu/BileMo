@@ -28,10 +28,11 @@ class PhoneController extends AbstractController
         $jsonPhoneList = $cache->get($idCache, function (ItemInterface $item) use ($phoneRepository, $page, $limit, $brand, $serializer) {
 
             $item->tag('phonesCache');
+            $item->expiresAfter(60);
             $phoneList = $phoneRepository->findAllPhonePagined($page, $limit, $brand);
             return $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
         });
-        
+
         return new JsonResponse(
             $jsonPhoneList,
             Response::HTTP_OK,
