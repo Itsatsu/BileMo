@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PhoneRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PhoneRepository::class)]
 class Phone
