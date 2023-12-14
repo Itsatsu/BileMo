@@ -25,13 +25,13 @@ class PhoneController extends AbstractController
         $brand = $request->query->get('brand', null);
 
         $idCache = 'phones-list-' . $page . '-' . $limit . '-' . $brand;
-        $phoneList = $cache->get($idCache, function (ItemInterface $item) use ($phoneRepository, $page, $limit, $brand) {
+        $jsonPhoneList = $cache->get($idCache, function (ItemInterface $item) use ($phoneRepository, $page, $limit, $brand, $serializer) {
 
             $item->tag('phonesCache');
-            return $phoneRepository->findAllPhonePagined($page, $limit, $brand);
+            $phoneList = $phoneRepository->findAllPhonePagined($page, $limit, $brand);
+            return $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
         });
-
-        $jsonPhoneList = $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
+        
         return new JsonResponse(
             $jsonPhoneList,
             Response::HTTP_OK,
