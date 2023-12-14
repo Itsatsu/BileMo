@@ -22,10 +22,10 @@ class PhoneRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Phone[] Returns an array of Phone objects
      * @param string|null $brand
      * @param int $page
      * @param int $limit
+     * @return Phone[] Returns an array of Phone objects
      */
     public function findAllPhonePagined(int $page, int $limit, ?string $brand): array
     {
