@@ -39,6 +39,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findByCustomerUserPagined(int $customer, int $page, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
+        
+        return $qb->getQuery()->getResult();
+    }
+
+
+
+
+
+
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
