@@ -114,9 +114,11 @@ class UserController extends AbstractController
     }
 
     #[Route('api/customers/{id}/users', name: 'customer_users', methods: ['GET'])]
-    public function getCustomerUsers(Customer $customer, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function getCustomerUsers(Customer $customer, UserRepository $userRepository, SerializerInterface $serializer, Request $request): JsonResponse
     {
-        $users = $userRepository->findBy(['customer' => $customer]);
+        $page = $request->query->get('page', 1);
+        $limit = $request->query->get('limit', 3);
+        $users = $userRepository->findByCustomerUserPagined($customer->getId(), $page, $limit);
         $jsonUsers = $serializer->serialize($users, 'json', ['groups' => 'getUserDetail']);
 
         return new JsonResponse(
