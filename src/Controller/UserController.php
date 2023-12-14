@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -75,7 +76,7 @@ class UserController extends AbstractController
     }
 
     #[Route('api/users', name: 'user_create', methods: ['POST'])]
-    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, CustomerRepository $customerRepository, ValidatorInterface $validator): JsonResponse
+    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, CustomerRepository $customerRepository, ValidatorInterface $validator, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
 
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
@@ -101,13 +102,13 @@ class UserController extends AbstractController
         $user->setRoles(['ROLE_USER']);
         $em->persist($user);
         $em->flush();
-
+        $location = $urlGenerator->generate('app_user_detail', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUserDetail']);
 
         return new JsonResponse(
             $jsonUser,
-            Response::HTTP_OK,
-            [],
+            Response::HTTP_CREATED,
+            ['Location' => $location],
             true
         );
     }
