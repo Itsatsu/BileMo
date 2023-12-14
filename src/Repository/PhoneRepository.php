@@ -21,6 +21,28 @@ class PhoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Phone::class);
     }
 
+    /**
+     * @return Phone[] Returns an array of Phone objects
+     * @param string|null $brand
+     * @param int $page
+     * @param int $limit
+     */
+    public function findAllPhonePagined(int $page, int $limit, ?string $brand): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+        //si il y a un filtre sur la marque
+        if ($brand) {
+            $queryBuilder
+                ->join('p.brand', 'b')
+                ->andWhere('b.name = :brand')
+                ->setParameter('brand', $brand);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Phone[] Returns an array of Phone objects
     //     */
