@@ -88,8 +88,6 @@ class UserController extends AbstractController
         if ($updatedUser->getPassword() !== null) {
             $currentUser->setPassword($updatedUser->getPassword());
         }
-
-
         $errors = $validator->validate($currentUser);
         if (count($errors) > 0) {
             $jsonErrors = $serializer->serialize($errors, 'json');
@@ -124,7 +122,7 @@ class UserController extends AbstractController
         //Customer modifié
         if ($idCustomer !== null) {
             $newCustomer = $customerRepository->find($idCustomer);
-            $currenUser->setCustomer($newCustomer);
+            $currentUser->setCustomer($newCustomer);
         }
 
         $cache->invalidateTags(['usersCache' . $currentUser->getCustomer()->getId()]);
