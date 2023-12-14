@@ -151,7 +151,6 @@ class UserController extends AbstractController
         $idCache = 'customer-users-list-' . $customer->getId() . '-' . $page . '-' . $limit;
 
         $jsonUsers = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $customer, $page, $limit, $serializer) {
-            echo 'No cache';
             $item->tag('usersCache' . $customer->getId());
             $users = $userRepository->findByCustomerUserPagined($customer->getId(), $page, $limit);
             return $serializer->serialize($users, 'json', ['groups' => 'getUserDetail']);
