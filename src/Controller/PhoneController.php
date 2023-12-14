@@ -10,19 +10,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/api/phones')]
 class PhoneController extends AbstractController
 {
+
     #[Route('/', name: 'app_phone', methods: ['GET'])]
-    public function getAllPhones(PhoneRepository $phoneRepository, SerializerInterface $serializer, Request $request): JsonResponse
+    public function getAllPhones(PhoneRepository $phoneRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
         $page = $request->query->get('page', 1);
         $limit = $request->query->get('limit', 3);
         $brand = $request->query->get('brand', null);
 
-        $phoneList = $phoneRepository->findAllPhonePagined($page, $limit, $brand);
-        $jsonPhoneList = $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
+        $idCache = 'phones-list-' . $page . '-' . $limit . '-' . $brand;
+        $jsonPhoneList = $cache->get($idCache, function (ItemInterface $item) use ($phoneRepository, $page, $limit, $brand, $serializer) {
+
+            $item->tag('phonesCache');
+            $item->expiresAfter(60);
+            $phoneList = $phoneRepository->findAllPhonePagined($page, $limit, $brand);
+            return $serializer->serialize($phoneList, 'json', ['groups' => 'getPhones']);
+        });
+
         return new JsonResponse(
             $jsonPhoneList,
             Response::HTTP_OK,
