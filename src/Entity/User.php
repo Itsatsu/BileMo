@@ -4,11 +4,45 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "app_user_detail",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute= true
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
+ * )
+ *
+ * @Hateoas\Relation(
+ *     "delete",
+ *     href = @Hateoas\Route(
+ *     "user_delete",
+ *     parameters = { "id" = "expr(object.getId())" },
+ *     absolute= true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
+ * )
+ *
+ * @Hateoas\Relation(
+ *     "update",
+ *     href = @Hateoas\Route(
+ *     "user_update",
+ *     parameters = { "id" = "expr(object.getId())" },
+ *     absolute= true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
+ * )
+ *
+ *
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
