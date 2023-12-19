@@ -6,6 +6,8 @@ use App\Entity\Phone;
 use App\Repository\PhoneRepository;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +20,38 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class PhoneController extends AbstractController
 {
 
+
+    /**
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne la listes des téléphones",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=Phone::class, groups={"getPhones"}))
+     *      )
+     *)
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Numéro de la page",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Nombre d'éléments par page",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="brand",
+     *     in="query",
+     *     description="Nom de la marque",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Phones")
+     *
+     *
+     */
     #[Route('/', name: 'app_phone', methods: ['GET'])]
     public function getAllPhones(PhoneRepository $phoneRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -43,6 +77,17 @@ class PhoneController extends AbstractController
         );
     }
 
+    /**
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne un téléphone avec ces caractéristiques",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=Phone::class, groups={"getPhoneDetail"}))
+     *      )
+     *)
+     * @OA\Tag(name="Phones")
+     */
     #[Route('/{id}', name: 'app_phone_detail', methods: ['GET'])]
     public function getPhone(Phone $phone, SerializerInterface $serializer): JsonResponse
     {

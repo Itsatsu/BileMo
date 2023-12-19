@@ -9,6 +9,8 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +26,18 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class UserController extends AbstractController
 {
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne les details d'un utilisateur",
+     *     @OA\JsonContent(
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=User::class, groups={"getUserDetail"}))
+     *    )
+     * )
+     * @OA\Tag(name="Users")
+     *
+     */
     #[Route('api/users/{id}', name: 'app_user_detail', methods: ['GET'])]
     public function getUserDetail(User $user, SerializerInterface $serializer): JsonResponse
     {
@@ -39,7 +53,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @OA\Response(
+     *     response=204,
+     *     description="Supprime un utilisateur",
+     * )
+     * @OA\Tag(name="Users")
+     *
      */
     #[Route('api/users/{id}', name: 'user_delete', methods: ['DELETE'])]
     public function deleteUser(User $user, EntityManagerInterface $em, TagAwareCacheInterface $cache): JsonResponse
@@ -57,6 +76,54 @@ class UserController extends AbstractController
 
     /**
      * @throws InvalidArgumentException
+     * @OA\Response(
+     *     response=204,
+     *     description="Met à jour un utilisateur",
+     * )
+     * @OA\Tag(name="Users")
+     * @OA\RequestBody(
+     *      @OA\JsonContent(
+     *           example={
+     *              "email": "email@test.fr",
+     *              "password": "password",
+     *              "firstName": "firstName",
+     *              "lastName": "lastName",
+     *              "customerId": 1
+     *           },
+     *      )
+     * )
+     * @OA\Parameter(
+     *     name="email",
+     *     in="query",
+     *     required=false,
+     *     description="Email de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="password",
+     *     required=false,
+     *     in="query",
+     *     description="Mot de passe de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="firstName",
+     *     in="query",
+     *     description="Prénom de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *    name="lastName",
+     *     in="query",
+     *     description="Nom de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="customerId",
+     *     in="query",
+     *     description="Id du customer",
+     *     @OA\Schema(type="integer")
+     * )
      */
     #[Route('api/users/{id}', name: 'user_update', methods: ['PUT'])]
     public function updateUser(User $currentUser, SerializerInterface $serializer, EntityManagerInterface $em, Request $request, CustomerRepository $customerRepository, ValidatorInterface $validator, TagAwareCacheInterface $cache, UserPasswordHasherInterface $passwordHasher): JsonResponse
@@ -139,6 +206,58 @@ class UserController extends AbstractController
 
     /**
      * @throws InvalidArgumentException
+     * @OA\Response(
+     *     response=201,
+     *     description="Crée un utilisateur",
+     *     @OA\JsonContent(
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=User::class , groups={"getUserDetail"})))
+     *   )
+     * )
+     * @OA\Tag(name="Users")
+     * @OA\RequestBody(
+     *     @OA\JsonContent(
+     *          example={
+     *              "email": "email@test.fr",
+     *              "password": "password",
+     *         "firstName": "firstName",
+     *     "lastName": "lastName",
+     *     "customerId": 1
+     *          },
+     * )
+     * )
+     * @OA\Parameter(
+     *     name="email",
+     *     in="query",
+     *     required=true,
+     *     description="Email de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="password",
+     *     in="query",
+     *     required=true,
+     *     description="Mot de passe de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="firstName",
+     *     in="query",
+     *     description="Prénom de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="lastName",
+     *     in="query",
+     *     description="Nom de l'utilisateur",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="customerId",
+     *     in="query",
+     *     description="Id du customer",
+     *     @OA\Schema(type="integer")
+     * )
      */
     #[Route('api/users', name: 'user_create', methods: ['POST'])]
     public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, CustomerRepository $customerRepository, ValidatorInterface $validator, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
@@ -180,6 +299,17 @@ class UserController extends AbstractController
         );
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des utilisateurs d'un customer",
+     *     @OA\JsonContent(
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=User::class, groups={"getUserDetail"})))
+     *  )
+     * )
+     * @OA\Tag(name="Customers")
+     */
     #[Route('api/customers/{id}/users', name: 'customer_users', methods: ['GET'])]
     public function getCustomerUsers(Customer $customer, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
