@@ -308,6 +308,19 @@ class UserController extends AbstractController
      *     @OA\Items(ref=@Model(type=User::class, groups={"getUserDetail"})))
      *  )
      * )
+     *  @OA\Parameter(
+     *      name="page",
+     *      in="query",
+     *      description="Page que vous souhaitez récupérer",
+     *      @OA\Schema(type="int")
+     *  )
+     *  @OA\Parameter(
+     *      name="limit",
+     *      in="query",
+     *      description="Nombre d'éléments par page que vous souhaitez récupérer",
+     *      @OA\Schema(type="int")
+     *  )
+     *
      * @OA\Tag(name="Customers")
      */
     #[Route('api/customers/{id}/users', name: 'customer_users', methods: ['GET'])]
