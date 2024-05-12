@@ -45,7 +45,9 @@ nelmio_api_doc:
               default: password
       securitySchemes:
         bearerAuth:
-          type: apiKey
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
           in: header
           name: Authorization # or another header name
     security:
