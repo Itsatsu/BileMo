@@ -60,8 +60,8 @@ puis ```openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubo
        ```http://IpDuServeur:8000/api```
 
 ## Connexion
-- il y a 5 utilisateurs chaque utilisateur appartient à un client différent, juste le chiffre dans l'email change
+- il y a 5 customer avec chacun 5 user associé
 - Pour obtenir un token JWT, vous devez vous connecter via la route /api/login_check avec les identifiants suivants :
-  - email: user0@gmail.com
+  - email: customer0@gmail.com
   - password: password
       
