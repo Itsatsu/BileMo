@@ -45,4 +45,15 @@ class UserRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findByCustomerUserPagined(int $customer, int $page, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
+
+        return $qb->getQuery()->getResult();
+    }
 }
