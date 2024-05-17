@@ -4,84 +4,26 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Hateoas\Configuration\Annotation as Hateoas;
-use JMS\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @Hateoas\Relation(
- *      "self",
- *      href = @Hateoas\Route(
- *          "app_user_detail",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute= true
- *      ),
- *      exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
- * )
- *
- * @Hateoas\Relation(
- *     "delete",
- *     href = @Hateoas\Route(
- *     "user_delete",
- *     parameters = { "id" = "expr(object.getId())" },
- *     absolute= true
- *     ),
- *     exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
- * )
- *
- * @Hateoas\Relation(
- *     "update",
- *     href = @Hateoas\Route(
- *     "user_update",
- *     parameters = { "id" = "expr(object.getId())" },
- *     absolute= true
- *     ),
- *     exclusion = @Hateoas\Exclusion(groups={"getUserDetail"}, excludeIf="expr(not is_granted('ROLE_USER'))")
- * )
- *
- *
- */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getUserDetail'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['getUserDetail'])]
-    #[Assert\NotBlank(message: "L'email ne peut pas être vide")]
-    #[Assert\Email(message: "L'email n'est pas valide")]
-    #[Assert\Length(min: 5, max: 180, minMessage: "L'email doit contenir au moins 5 caractères", maxMessage: "L'email doit contenir au maximum 180 caractères")]
+    #[ORM\Column(length: 150)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    #[Groups(['getUserDetail'])]
-    private array $roles = [];
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $firstname = null;
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    #[Assert\NotBlank(message: "Le mot de passe ne peut pas être vide")]
-    private ?string $password = null;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $lastname = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['getUserDetail'])]
-    #[Assert\Length(min: 2, max: 255, minMessage: "Le prénom doit contenir au moins 2 caractères", maxMessage: "Le prénom doit contenir au maximum 255 caractères")]
-    private ?string $firstName = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['getUserDetail'])]
-    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom doit contenir au moins 2 caractères", maxMessage: "Le nom doit contenir au maximum 255 caractères")]
-    private ?string $lastName = null;
-
-    #[ORM\ManyToOne(inversedBy: 'Users')]
-    #[Groups(['getUserDetail'])]
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Customer $customer = null;
 
     public function getId(): ?int
@@ -101,43 +43,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUsername(): string
-    {
-        return $this->getUserIdentifier();
-    }
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string)$this->email;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -150,35 +55,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials(): void
+    public function getFirstname(): ?string
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        return $this->firstname;
     }
 
-    public function getFirstName(): ?string
+    public function setFirstname(?string $firstname): static
     {
-        return $this->firstName;
-    }
-
-    public function setFirstName(?string $firstName): static
-    {
-        $this->firstName = $firstName;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->lastName;
+        return $this->lastname;
     }
 
-    public function setLastName(?string $lastName): static
+    public function setLastname(?string $lastname): static
     {
-        $this->lastName = $lastName;
+        $this->lastname = $lastname;
 
         return $this;
     }
