@@ -161,10 +161,8 @@ class UserController extends AbstractController
         SerializerInterface         $serializer,
         EntityManagerInterface      $em,
         Request                     $request,
-        CustomerRepository          $customerRepository,
         ValidatorInterface          $validator,
         TagAwareCacheInterface      $cache,
-        UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
         if ($currentUser->getCustomer() !== $this->getUser()) {
             return new JsonResponse(
