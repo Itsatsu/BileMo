@@ -39,7 +39,7 @@ nelmio_api_doc:
           properties:
             email:
               type: string
-              default: user0@gmail.com
+              default: customer0@gmail.com
             password:
               type: string
               default: password
